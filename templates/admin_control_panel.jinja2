@@ -1,0 +1,103 @@
+{% extends "admin_home.jinja2" %}
+
+
+
+{% block accordion %}
+    <style type="text/css">
+        {{ color_schema_css }}
+    </style>
+    <div id="add_event_type_dialog" title="Add Event Type">
+        <p>Choose a name for a new event type that is descriptive.</p>
+        <input id="new_event_type" size="40" class="dark_input" placeholder="New Event Type" />
+    </div>
+
+<div id="accordion">
+    {% block event_types %}
+        <h3>Event Types</h3>
+        <div>
+            <form id="add_event_type_form" action="/admin/event-type/add" method="post">
+                <input type="hidden" id="session_token" name="token" value="{{ session_token }}"/>
+                <input id="add_event_name" type="hidden" name="new_event_name" value="null" />
+            </form>
+
+            <table class="admin_table" border="0">
+                <tr class="admin_table_header">
+                    <td>Type ID</td>
+                    <td width="5%"><a id="add_event_type" href="#"><img class="add_button"
+                                              src="{{ url_for('static', filename='images/add_icon.png') }}"/></a></td>
+                    <td width="50%">Event Type</td>
+                    <td width="20%" colspan="2">Event Count</td>
+                </tr>
+                {% for each in event_types %}
+                    <tr class="{{ loop.cycle('admin_table_data_row1','admin_table_data_row2') }}">
+                        <td id="event_row_id_{{ loop.index0 }}" colspan="2">{{ each[0] }}</td>
+                        <td>{{ each[1] }}</td>
+                        <td width="20%">0</td>
+                        <td><a class="main_anchor"
+                                                    href="/view_events/type/{{ each[0] }}/{{ session_token }}"><img
+                                width="24" height="24" class="view_event_button"
+                                src="{{ url_for('static', filename='images/view_event_button.png') }}"></a>
+                        </td>
+                    </tr>
+                 {% endfor %}
+            </table>
+        </div>
+    {% endblock %}
+    {% block api_keys %}
+        <h3>API Keys</h3>
+        <div>
+            <form id="new_api_key" action="/admin/api-key/add" method="post">
+                <input type="hidden" id="session_token" name="token" value="{{ session_token }}"/>
+            </form>
+            <table class="admin_table" border="0">
+                <tr class="admin_table_header">
+                    <td colspan="1" width="25%">API Key</td><td width="5%"><a id="add_api_key" href="#"><img class="add_button"
+                                              src="{{ url_for('static', filename='images/add_icon.png') }}"/></a></td>
+                    <td colspan="2" width="40%">Rate Quota</td>
+                    <td colspan="2" width="30%">Event Count</td>
+                </tr>
+                {% if api_keys %}
+                    {% for each in api_keys %}
+                        <tr class="{{ loop.cycle('admin_table_data_row1','admin_table_data_row2') }}">
+                            <td colspan="2" width="30%">{{ each.api_key }}</td>
+                            <td colspan="2" width="40%">
+                                <div class="quota_container">
+                                    {% if (each.events_posted / each.quota) < 0.75 %}
+                                        <span class="within_quota">
+                                    {% else %}
+                                        <span class="near_quota">
+                                    {% endif %}
+                                    {{ each.events_posted }}/{{ each.quota }}
+                                    </span>
+                                    <div class="gauge_container">
+                                                <div class="gauge_fill"
+                                                     style="width: {{ (each.events_posted / each.quota) * 100.0 }}%;">
+                                                </div>
+                                            </div>
+                                </div>
+                            </td>
+                            <td width="25%">0</td>
+                            <td>
+                            <a href="/view_events/api-key/{{ each.api_key }}/{{ session_token }}">
+                                <img class="view_event_button" width="24" height="24"
+                                     src="{{ url_for('static', filename='images/view_event_button.png') }}"/></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5"><p id="no_api_keys">Create an API key by clicking the button to the top
+                            right.</p></td>
+                    </tr>
+                {% endif %}
+            </table>
+        </div>
+    {% endblock %}
+</div>
+    <script language="JavaScript" src="{{ url_for('static', filename='jquery-ui/jquery-ui.js') }}"></script>
+        <script language="JavaScript">
+            $("#accordion").accordion();
+        </script>
+    <script language="JavaScript" src="{{ url_for('static', filename='js/control_panel.js') }}"></script>
+{% endblock %}
+

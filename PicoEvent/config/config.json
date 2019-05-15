@@ -1,0 +1,7 @@
+{
+  "mysql_host": "localhost",
+  "mysql_user": "root",
+  "mysql_passwd": "beligerent8136",
+  "mysql_db": "pico_event",
+  "mysql_test_db": "pico_event_test_db"
+}

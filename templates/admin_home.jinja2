@@ -1,0 +1,12 @@
+{% extends "admin_base.jinja2" %}
+
+{% block header %}
+<h3>{% block title %}Business Intelligence Event Viewer{% endblock %}</h3>
+{% endblock %}
+
+{% block content %}
+    {% block accordion %}
+        {% block api_keys %}{% endblock %}
+        {% block event_types %}{% endblock %}
+    {% endblock %}
+{% endblock %}

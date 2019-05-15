@@ -1,0 +1,241 @@
+/* Dark theme begins */
+
+:root {
+    --background-dark-grey: rgb(40,40,40);
+    --background-medium-grey: rgb(60,63,65);
+    --background-grey-highlight: rgb(81,86,88);
+    --dark-theme-border: rgb(96,96,96);
+    --dallas-node-color: rgb(166,33,107);
+    --london-node-color: rgb(236,25,75);
+    --amsterdam-node-color: rgb(242,106,78);
+    --market-watch-green: rgb(0,183,79);
+    --dark-mode-red: rgb(209,103,90);
+    --sky-blue: rgb(124,136,198);
+}
+
+#messages_container {
+    width: 420px;
+    margin: 8px auto;
+}
+
+#login_box {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8px;
+}
+
+body {
+    color: whitesmoke;
+}
+
+.blue_submit_button {
+    background-color: rgb(54,88,128);
+    border: 1px solid rgb(76,122,140);
+    color: white;
+    padding: 12px;
+}
+
+.blue_small_submit_button {
+    background-color: rgb(54,88,128);
+    border: 1px solid rgb(76,122,140);
+    color: white;
+    padding: 5px;
+    width: 64px;
+}
+
+.grey_submit_button {
+    background-color: rgb(76,80,82);
+    border: 1px solid rgb(96,96,96);
+    color:white;
+    padding: 5px;
+}
+
+.dark_input {
+
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border: 1px solid rgb(80,80,80);
+
+}
+
+.ui_section_header {
+    background-color: rgb(10,16,22);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-top:24px;
+}
+
+.none {
+    color: grey;
+}
+
+.add_button {
+    height: 20px;
+    width: 32px;
+    padding: 8px;
+    padding-top: 12px;
+}
+
+h3.section_header {
+    padding-top:16px;
+    padding-left:16px;
+}
+
+.dark_grey_background {
+  background-color: rgb(40,40,40);
+}
+
+.ui_div_background {
+  background-color: rgb(60,63,65);
+}
+
+.ui_div_highlight {
+  background-color: rgb(81,86,88);
+}
+
+.main_anchor {
+    text-decoration: none;
+    color:var(--sky-blue);
+}
+
+.main_anchor:hover {
+    text-decoration: underline;
+    color:var(--dark-mode-red);
+}
+
+.main_anchor:visited {
+    text-decoration: none;
+    color:var(--dark-mode-red);
+}
+
+/* Dark theme ends */
+
+.api_key_entry {
+    background-color: black;
+    padding: 15px;
+}
+
+.event_type_entry {
+    background-color: black;
+    padding: 15px;
+}
+
+table {
+    width: 100%;
+}
+
+#admin_header {
+    width:1024px;
+    padding:15px;
+    color: whitesmoke;
+}
+
+#admin_content {
+    width: 640px;
+    padding:8px;
+    color: whitesmoke;
+}
+
+.h3_admin_header {
+    color:whitesmoke;
+    padding:5px;
+}
+
+.p_admin_header {
+    color:whitesmoke;
+    padding:5px;
+}
+
+h1 {
+    color:whitesmoke;
+    padding: 5px;
+}
+
+#login_error {
+    color: var(--dark-mode-red);
+}
+
+#login_box {
+    width: 440px;
+    padding:15px;
+}
+
+#login_table {
+    width:100%;
+}
+
+#create_event_form {
+    display: none;
+}
+
+#event_types_container {
+}
+
+#all_content {
+    width:470px;
+    border:1px solid var(--dark-theme-border);
+    margin-left:auto;
+    margin-right:auto;
+    color:whitesmoke;
+}
+
+.admin_table_header {
+    background-color: rgb(205, 92, 92);
+    margin: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.quota_container {
+    width: 100%;
+    height: 24px;
+    vertical-align: middle;
+}
+
+.near_quota {
+    color: var(--dark-mode-red);
+}
+
+.within_quota {
+    color: var(--market-watch-green);
+}
+
+.gauge_container {
+    border: 1px solid cornsilk;
+    height: 14px;
+    width: 50%;
+    float: right;
+    margin-right: 5px;
+    margin-top: 3px;
+}
+
+.gauge_fill {
+    height:14px;
+    background-color: steelblue;
+}
+
+.admin_table {
+    border: none;
+}
+
+.admin_table_data_row1 {
+    background-color: var(--background-grey-highlight);
+    margin: 8px;
+    text-align: center;
+}
+
+.admin_table_data_row2 {
+    background-color: var(--background-medium-grey);
+    margin: 8px;
+    text-align: center;
+}
+
+#no_api_keys {
+    font-size: smaller;
+}
+
+#login_main {
+    width: 1024px;
+    height: 768px;
+}
