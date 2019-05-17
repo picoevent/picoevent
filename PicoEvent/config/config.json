@@ -1,7 +1,9 @@
 {
   "mysql_host": "localhost",
-  "mysql_user": "root",
-  "mysql_passwd": "beligerent8136",
-  "mysql_db": "pico_event",
-  "mysql_test_db": "pico_event_test_db"
+  "mysql_user": "pico",
+  "mysql_passwd": "password",
+  "mysql_db": "picoevent",
+  "mysql_test_db": "picoevent_test",
+  "console_log_file": "/tmp/picoevent_console.log",
+  "console_logging_enabled": true,
 }
