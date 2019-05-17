@@ -5,5 +5,5 @@
   "mysql_db": "picoevent",
   "mysql_test_db": "picoevent_test",
   "console_log_file": "/tmp/picoevent_console.log",
-  "console_logging_enabled": true,
+  "console_logging_enabled": true
 }

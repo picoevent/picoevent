@@ -10,7 +10,7 @@ import re
 import time
 import sys
 
-CONFIG_DIR = "config/"
+CONFIG_DIR = "PicoEvent/config/"
 
 COUNT_REGEX = re.compile("^SELECT COUNT")
 
@@ -50,8 +50,12 @@ class Database:
         self._logger = logger
         if env:
             self._env = env
+            self._config = env.db_config
+            self._quota_reset_interval = timedelta(seconds=env.db_config["rate_limit_reset"])
+            self._rate_limit_quota = env.db_config["rate_limit_quota"]
+        else:
             try:
-                config_stream = open(CONFIG_DIR + "config.json", "r")
+                config_stream = open("config/" + "config.json", "r")
                 self._config = json.load(config_stream)
                 config_stream.close()
             except IOError:
@@ -59,11 +63,6 @@ class Database:
                     self._logger.error("IOError opening config file.")
                 else:
                     print("IOError opening config file.")
-
-            self._config = env.db_config
-            self._quota_reset_interval = timedelta(seconds=env.db_config["rate_limit_reset"])
-            self._rate_limit_quota = env.db_config["rate_limit_quota"]
-        else:
             self._quota_reset_interval = timedelta(hours=1)
             self._rate_limit_quota = 1000
             self._env = None
@@ -82,7 +81,7 @@ class Database:
         if test:
             # clear the test database for unit testing
             c = self._db.cursor()
-            sql_stream = open(CONFIG_DIR + "picoevent-mysql.sql", "r")
+            sql_stream = open("config/picoevent-mysql.sql", "r")
             sql_data = sql_stream.read()
             sql_stream.close()
 
@@ -673,26 +672,32 @@ class Database:
     def mysql_setup(self):
         c = self._db.cursor()
 
-        print("Database not setup, install schema? (y/n)")
-        console_input = input("> ")
-        if console_input == "y":
-            sql_stream = open(CONFIG_DIR + "picoevent-mysql.sql", "r")
-            sql_data = sql_stream.read()
-            sql_stream.close()
-            try:
-                c.execute(sql_data)
-                self._db.commit()
-            except Error as e:
-                try:
-                    error_message = "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
-                except IndexError:
-                    error_message = "MySQL Error: %s" % (str(e),)
+        print("Database not setup, install schema?")
+        while True:
+            console_input = input("(Y/n) ")
+            if console_input == "Y":
+                break
+            elif console_input == "n":
+                sys.exit()
+            print("Acceptable values are Y or n")
 
-                if self._logger:
-                    self._logger.error(error_message)
-                else:
-                    print(error_message)
-                return 1
+        sql_stream = open(CONFIG_DIR + "picoevent-mysql.sql", "r")
+        sql_data = sql_stream.read()
+        sql_stream.close()
+        try:
+            c.execute(sql_data)
+            self._db.commit()
+        except Error as e:
+            try:
+                error_message = "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+            except IndexError:
+                error_message = "MySQL Error: %s" % (str(e),)
+
+            if self._logger:
+                self._logger.error(error_message)
+            else:
+                print(error_message)
+            return 1
         return 0
 
     @property

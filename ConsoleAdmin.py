@@ -44,10 +44,10 @@ class ConsoleUserManager(ConsoleMenu):
                          "Revoke User Permission",
                          "List Event Types",
                          "Reset Password",
-                         "Exit"]
+                         "Back to Main Menu"]
 
     def __init__(self, environment, user_id, session_token, use_logger=None):
-        self._db = Database(logger=use_logger, env=environment)
+        self._db = Database(env=environment, logger=use_logger)
         self._session_token = session_token
         self._user_id = user_id
 
@@ -56,7 +56,7 @@ class ConsoleUserManager(ConsoleMenu):
         x = 1
         choices = ConsoleUserManager.MAIN_MENU_CHOICES
         for each in choices:
-            print("{0}.) " + each)
+            print("{0}.) ".format(x) + each)
             x += 1
 
         choice = self.select_item(1, len(choices) + 1)
@@ -84,8 +84,7 @@ class ConsoleUserManager(ConsoleMenu):
             new_password = input("New password: ")
             self.reset_password(username, new_password)
         elif choice == 8:
-            print("Bye")
-            sys.exit(0)
+            return
         input("\nPress Enter to continue")
         self.main_menu()
 
@@ -172,8 +171,9 @@ class ConsoleUserManager(ConsoleMenu):
         pass
 
 
-class ConsoleMainMenuManager:
+class ConsoleMainMenuManager(ConsoleMenu):
     STATES = ["DATABASE_NOT_SETUP", "USER_ADMIN"]
+    MAIN_MENU = ["Reset admin password", "User administration", "Exit"]
 
     def __init__(self, console_env, use_logger=None):
         self._config = config
@@ -181,13 +181,53 @@ class ConsoleMainMenuManager:
         self._state = "DATABASE_NOT_SETUP"
         self._user_admin_mgr = None
         self._env = console_env
+        self._user_id = -1
+        self._session_token = None
 
     def user_admin_mode(self, user_id, session_token):
-        self._user_admin_mgr = ConsoleUserManager(self._env, user_id, session_token)
+        self._user_admin_mgr = ConsoleUserManager(self._env, user_id, session_token,
+                                                  use_logger=self._logger)
+        self._user_id = user_id
+        self._session_token = session_token
+
         self._state = "USER_ADMIN"
 
+    def change_administrator_password(self):
+        _db = Database(self._logger, False, False, self._env)
+        admin_uid = _db.admin_user_id
+        if admin_uid > 0:
+            new_password = input("New administrator password: ")
+            try:
+                _db.reset_password("admin", new_password)
+            except DatabaseException:
+                print("Database exception: unable to reset administrators password.")
+        else:
+            print("Invalid administrator user ID, database could be corrupted.")
+            print("Consider creating a new empty database and starting over.\n")
+
     def display_menu(self):
-        pass
+        if self._state == "USER_ADMIN":
+            self._user_admin_mgr.main_menu()
+
+        print("Console Administration Main Menu\n")
+        try:
+            test_db = Database(self._logger, True, False, self._env)
+            del test_db
+        except DatabaseException:
+            print("Warning: Test database does not exist or is not accessible with supplied credentials.")
+        print("\n")
+        x = 1
+        for choice in ConsoleMainMenuManager.MAIN_MENU:
+            print("{0}.) {1}".format(x, choice))
+            x += 1
+        choice = self.select_item(1, 3)
+        if choice == 1:
+            self.change_administrator_password()
+        elif choice == 2:
+            self.user_admin_mode(self._user_id, self._session_token)
+        else:
+            sys.exit()
+        input("Press Enter to continue")
 
 
 def setup_file_logging(log_path):
@@ -222,10 +262,11 @@ if __name__ == "__main__":
             print("Logging to file: {0}".format(config["console_log_file"]))
             logger = setup_file_logging(config["console_log_file"])
 
-    env = Environment(config["mysql_host"], "", config["mysql_user"], config["mysql_password"], config["mysql_db"],
+    env = Environment(config["mysql_host"], "", config["mysql_user"], config["mysql_passwd"], config["mysql_db"],
                       config["mysql_test_db"], 0, 3600, "", "")
 
-    db = Database(logger)
+    context_manager = ConsoleMainMenuManager(env, logger)
+    db = Database(env=env, logger=logger)
     session_id = None
     admin_user_id = -1
 
@@ -253,7 +294,8 @@ if __name__ == "__main__":
             print(message)
             user_input = input("(Y/n)")
             if user_input == "Y":
-                session_id = login_admin()
+                context_manager.user_admin_mode(admin_user_id, login_admin())
+                context_manager.display_menu()
             else:
                 sys.exit(0)
         else:
