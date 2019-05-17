@@ -3,6 +3,7 @@
 :root {
     --background-dark-grey: rgb(40,40,40);
     --background-medium-grey: rgb(60,63,65);
+    --background-login-page: rgb(58,62,64);
     --background-grey-highlight: rgb(81,86,88);
     --dark-theme-border: rgb(96,96,96);
     --dallas-node-color: rgb(166,33,107);
@@ -18,14 +19,19 @@
     margin: 8px auto;
 }
 
-#login_box {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 8px;
+body {
+    background-color: #111111;
+    color: whitesmoke;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    margin: 0;
 }
 
-body {
-    color: whitesmoke;
+#control_container {
+    position: fixed;
+    left:0;
+    top:60;
 }
 
 .blue_submit_button {
@@ -82,6 +88,8 @@ h3.section_header {
     padding-left:16px;
 }
 
+/* background color classes */
+
 .dark_grey_background {
   background-color: rgb(40,40,40);
 }
@@ -126,13 +134,13 @@ table {
 }
 
 #admin_header {
-    width:1024px;
-    padding:15px;
+    width:100%;
+    padding: 8px;
+    background-color: var(--background-dark-grey);
     color: whitesmoke;
 }
 
 #admin_content {
-    width: 640px;
     padding:8px;
     color: whitesmoke;
 }
@@ -150,19 +158,6 @@ table {
 h1 {
     color:whitesmoke;
     padding: 5px;
-}
-
-#login_error {
-    color: var(--dark-mode-red);
-}
-
-#login_box {
-    width: 440px;
-    padding:15px;
-}
-
-#login_table {
-    width:100%;
 }
 
 #create_event_form {
@@ -235,7 +230,3 @@ h1 {
     font-size: smaller;
 }
 
-#login_main {
-    width: 1024px;
-    height: 768px;
-}

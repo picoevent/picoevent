@@ -1,16 +1,22 @@
 <!doctype html>
 <head>
-    <title>PicoEvent Login</title>
+    <title>picoevent: login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.css') }}">
-    <script language="JavaScript" src="{{ url_for('static', filename='jquery-ui/jquery-ui.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.structure.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.theme.css') }}">
+    <script language="JavaScript" src="{{ url_for('static', filename='jquery-ui/external/jquery/jquery.js') }}"></script>
+    <script language="JavaScript" src="{{ url_for('static', filename='js/login_page.js') }}"></script>
 </head>
-<body class="dark_grey_background">
+<body class="wood_background">
+<div id="login_header" align="right">
+    <div id="login_header_content">
+    <img src="{{ url_for('static', filename='images/small_logo.png') }}"/>
+    <p id="admin_header_link">Project Website [ <a class="main_anchor" href="https://picoevent.io">picoevent.io</a> ]</p>
+</div>
+</div>
 <div id="login_main">
-    <div id="admin_header" class="ui_div_highlight">
-        <h3 class="h3_admin_header">PicoEvent Business Intelligence Platform</h3>
-        <p class="p_admin_header">Analyst/Administrator Login</p>
-    </div>
     <div id="messages_container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -23,27 +29,26 @@
             {% endif %}
         {% endwith %}
     </div>
-    <div class="ui-widget">
-
-    </div>
     <div id="login_box" class="ui_div_background">
         <form action="/admin/login" method="post" id="form_login">
             <table id="login_table" cellpadding="5">
 
                 <tr>
-                    <td><label class="login_label">E-Mail Address</label></td>
-                    <td align="right"><input size="35" name="username" class="dark_input"/></td>
+                    <td><label for="username" class="login_label">E-Mail Address</label></td>
+                    <td align="right"><input title="E-mail Address/Username" size="35" id="username"
+                                             class="dark_input"/></td>
                 </tr>
                 <tr>
-                    <td><label class="login_label">Password</label></td>
-                    <td align="right"><input size="35" name="password" type="password" class="dark_input"/></td>
+                    <td><label for="reset_password" class="login_label">Password</label></td>
+                    <td align="right"><input title="Password" size="35" id="password" type="password"
+                                             class="dark_input"/></td>
                 </tr>
                 <tr>
                     <td>
                         [&nbsp;<a id="reset_password" class="main_anchor" href="#">reset password</a>&nbsp;]
                     </td>
                     <td align="right">
-                        <input class="blue_small_submit_button" type="Submit" value="Login"/>
+                        <input class="blue_small_submit_button" type="button" id="login_button" value="Login"/>
                     </td>
                 </tr>
             </table>

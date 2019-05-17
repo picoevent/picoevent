@@ -49,23 +49,26 @@ class DatabaseReadOnlyException(DatabaseException):
 class Database:
     def __init__(self, logger=None, test: bool = False, read_only: bool = False, env: Environment = None):
         self._logger = logger
-        self.env = env
-        try:
-            config_stream = open(CONFIG_DIR + "config.json", "r")
-            self._config = json.load(config_stream)
-            config_stream.close()
-        except IOError:
-            if self._logger:
-                self._logger.error("IOError opening config file.")
-            else:
-                print("IOError opening config file.")
         if env:
+            self._env = env
+            try:
+                config_stream = open(CONFIG_DIR + "config.json", "r")
+                self._config = json.load(config_stream)
+                config_stream.close()
+            except IOError:
+                if self._logger:
+                    self._logger.error("IOError opening config file.")
+                else:
+                    print("IOError opening config file.")
+
             self._config = env.db_config
             self._quota_reset_interval = timedelta(seconds=env.db_config["rate_limit_reset"])
             self._rate_limit_quota = env.db_config["rate_limit_quota"]
         else:
             self._quota_reset_interval = timedelta(hours=1)
             self._rate_limit_quota = 1000
+            self._env = None
+
         self._read_only = read_only
 
         if test:

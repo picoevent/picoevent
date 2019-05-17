@@ -7,6 +7,7 @@ from PicoEvent.EventLog import EventLog, EventLogException
 from PicoEvent.Environment import Environment
 import binascii
 import os
+import json
 
 
 admin_blueprint = Blueprint('admin', __name__, url_prefix="/admin")
@@ -130,15 +131,16 @@ def login():
                                   current_app.config["REDIS_MASTER_HOST"],
                                   current_app.config["REDIS_READ_ONLY_HOST"])
 
-    username = request.form["username"]
-    password = request.form["password"]
+    input_data = request.get_json(True)
+
+    username = input_data["username"]
+    password = input_data["password"]
 
     db = Database(logger=current_app.logger, env=environment)
     try:
         result = db.login(username, password)
         session_token = result[0]
-        return redirect(url_for("admin.home",
-                                session_token=session_token))
+        return json.dumps({"success": True, "session_token": session_token.decode('utf-8')})
     except DatabaseException:
         flash("Invalid e-mail/password combination.", category="error")
-        return render_template("login.jinja2")
+        return json.dumps({"success": False, "error_msg": "Invalid e-mail/password combination."})

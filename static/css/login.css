@@ -1,0 +1,47 @@
+#reset_password_box {
+    background-color: var(--dark-theme-border);
+}
+
+.ui_div_login_background {
+    background-color: var(--background-login-page);
+}
+
+#login_error {
+    color: var(--dark-mode-red);
+}
+
+#login_table {
+    width:100%;
+}
+
+#admin_header_link {
+    text-align: right;
+    margin-right:24px;
+}
+
+#login_header {
+    width:100%;
+    padding: 8px;
+    background-color: var(--background-grey-highlight);
+    color: whitesmoke;
+}
+
+#login_header_content {
+    width:fit-content;
+    margin-right:48px;
+}
+
+#login_box {
+    margin-top: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 440px;
+    padding:15px;
+}
+
+.wood_background {
+    background-image: url("../images/woodpattern_background.jpg");
+    background-repeat: repeat;
+    width: 3000px;
+    height: 5000px;
+}
