@@ -2,15 +2,22 @@
 <head>
     <title>{% block title %}{% endblock %} - Administration</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.css') }}">
     <script language="JavaScript" src="{{ url_for('static', filename='jquery-ui/external/jquery/jquery.js') }}"></script>
 </head>
 <body class="dark_grey_background">
 <div id="admin_content_view">
-    <div id="admin_header" class="ui_div_highlight">
-        {% block header %}{% endblock %}
+    <div id="admin_header">
+        <img src="{{ url_for('static', filename='images/small_logo.png') }}" />
+        <div id="user_information">
+            <div id="inner_user_information">
+            <p class="user_information" id="user_information_full_name">Administrator</p>
+            <p class="user_information" id="user_information_link">[ <a class="main_anchor" href="/">Logout</a> ]</p>
+                </div>
+        </div>
     </div>
-    <div id="admin_content" class="ui_div_background">
+    <div id="admin_content" class="wood_background">
         {% block content %}{% endblock %}
     </div>
 </div>

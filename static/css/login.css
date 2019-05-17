@@ -35,13 +35,16 @@
     margin-top: 32px;
     margin-left: auto;
     margin-right: auto;
-    width: 440px;
+    width: -moz-fit-content;
+    width: fit-content;
     padding:15px;
 }
 
-.wood_background {
-    background-image: url("../images/woodpattern_background.jpg");
-    background-repeat: repeat;
-    width: 3000px;
-    height: 5000px;
+body {
+    background-color: #111111;
+    color: whitesmoke;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    margin: 0;
 }

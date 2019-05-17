@@ -1,0 +1,75 @@
+#control_panel {
+    width:512px;
+}
+
+#admin_header {
+    width:100%;
+    padding: 8px;
+    background-color: var(--background-grey-highlight);
+    color: whitesmoke;
+}
+
+.admin_table_header {
+    background-color: var(--background-dark-grey);
+    margin: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.user_information {
+    font-size: smaller;
+    text-align:center;
+}
+
+#inner_user_information {
+    width:fit-content;
+    width:-moz-fit-content;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#user_information_full_name {
+
+}
+
+#user_information_link {
+
+}
+
+#user_information {
+    background-color: var(--background-dark-grey);
+    height:145px;
+    position:fixed;
+    top:0;
+    right:0;
+    width: 300px;
+    text-align: right;
+}
+
+.td_api_key {
+    font-size: smaller;
+}
+
+#event_stream {
+    background:var(--background-dark-grey);
+    width:300px;
+    height:768px;
+    position:fixed;
+    top:60px;
+    right:0;
+}
+
+.event_element {
+    border: 1px solid black;
+    height: 80px;
+    width: 256px;
+}
+
+body {
+    background-color: #111111;
+    color: whitesmoke;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin: 0;
+}

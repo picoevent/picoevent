@@ -10,7 +10,12 @@
         <p>Choose a name for a new event type that is descriptive.</p>
         <input id="new_event_type" size="40" class="dark_input" placeholder="New Event Type" />
     </div>
-
+     <div id="event_stream">
+        {% for each_event in events %}
+            <div class="event_element {{ each_event.type_class }}">{{ each_event.event_data }}</div>
+        {% endfor %}
+    </div>
+<div id="control_panel">
 <div id="accordion">
     {% block event_types %}
         <h3>Event Types</h3>
@@ -22,8 +27,8 @@
 
             <table class="admin_table" border="0">
                 <tr class="admin_table_header">
-                    <td>Type ID</td>
-                    <td width="5%"><a id="add_event_type" href="#"><img class="add_button"
+
+                    <td colspan="2" width="5%"><a id="add_event_type" href="#"><img class="add_button"
                                               src="{{ url_for('static', filename='images/add_icon.png') }}"/></a></td>
                     <td width="50%">Event Type</td>
                     <td width="20%" colspan="2">Event Count</td>
@@ -51,7 +56,7 @@
             </form>
             <table class="admin_table" border="0">
                 <tr class="admin_table_header">
-                    <td colspan="1" width="25%">API Key</td><td width="5%"><a id="add_api_key" href="#"><img class="add_button"
+                    <td colspan="2" width="25%"><img class="add_button"
                                               src="{{ url_for('static', filename='images/add_icon.png') }}"/></a></td>
                     <td colspan="2" width="40%">Rate Quota</td>
                     <td colspan="2" width="30%">Event Count</td>
@@ -59,7 +64,7 @@
                 {% if api_keys %}
                     {% for each in api_keys %}
                         <tr class="{{ loop.cycle('admin_table_data_row1','admin_table_data_row2') }}">
-                            <td colspan="2" width="30%">{{ each.api_key }}</td>
+                            <td class="td_api_key" colspan="2" width="30%">{{ each.api_key }}</td>
                             <td colspan="2" width="40%">
                                 <div class="quota_container">
                                     {% if (each.events_posted / each.quota) < 0.75 %}
@@ -94,9 +99,13 @@
         </div>
     {% endblock %}
 </div>
+    </div>
+
     <script language="JavaScript" src="{{ url_for('static', filename='jquery-ui/jquery-ui.js') }}"></script>
         <script language="JavaScript">
             $("#accordion").accordion();
+            $("#control_panel").resizable( { "handles": "e",
+            "minWidth": 512} );
         </script>
     <script language="JavaScript" src="{{ url_for('static', filename='js/control_panel.js') }}"></script>
 {% endblock %}

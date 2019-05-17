@@ -28,10 +28,7 @@ $(function () {
 
     function react_to_resize() {
         let width = window.innerWidth;
-        let height = window.innerHeight - 60;
-        let style_string = "width:" + width + "px;" + height + "px;";
-        $("#control_container").attr(style_string);
-        $("#login_header").attr(style_string);
+        let height = window.innerHeight;
     }
 
     $(window).onresize = react_to_resize();

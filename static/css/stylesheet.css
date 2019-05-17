@@ -19,19 +19,12 @@
     margin: 8px auto;
 }
 
-body {
-    background-color: #111111;
-    color: whitesmoke;
-    max-width: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    margin: 0;
-}
+
 
 #control_container {
     position: fixed;
     left:0;
-    top:60;
+    top:60px;
 }
 
 .blue_submit_button {
@@ -133,13 +126,6 @@ table {
     width: 100%;
 }
 
-#admin_header {
-    width:100%;
-    padding: 8px;
-    background-color: var(--background-dark-grey);
-    color: whitesmoke;
-}
-
 #admin_content {
     padding:8px;
     color: whitesmoke;
@@ -173,13 +159,6 @@ h1 {
     margin-left:auto;
     margin-right:auto;
     color:whitesmoke;
-}
-
-.admin_table_header {
-    background-color: rgb(205, 92, 92);
-    margin: 8px;
-    text-align: center;
-    font-weight: 500;
 }
 
 .quota_container {
@@ -230,3 +209,9 @@ h1 {
     font-size: smaller;
 }
 
+.wood_background {
+    background-image: url("../images/woodpattern_background.jpg");
+    background-repeat: repeat;
+    width: 3000px;
+    height: 5000px;
+}
