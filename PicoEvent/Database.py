@@ -3,7 +3,6 @@ from PicoEvent.Environment import Environment
 from MySQLdb import connect, ProgrammingError, Error
 from hashlib import sha256
 from datetime import datetime, timedelta
-import logging
 import binascii
 import json
 import os
@@ -668,8 +667,8 @@ class Database:
                 self._logger.error(error_message)
             else:
                 print(error_message)
-            sys.exit(1)
-        sys.exit(0)
+            return 1
+        return 0
 
     def mysql_setup(self):
         c = self._db.cursor()
@@ -693,28 +692,25 @@ class Database:
                     self._logger.error(error_message)
                 else:
                     print(error_message)
-                exit(1)
+                return 1
         return 0
 
+    @property
+    def admin_user_id(self) -> int:
+        c = self._db.cursor()
+        try:
+            c.execute("SELECT user_id FROM users WHERE email_address=\"admin\"")
+            row = c.fetchone()
+            if row:
+                return row[0]
+        except Error as e:
+            try:
+                error_message = "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+            except IndexError:
+                error_message = "MySQL Error: %s" % (str(e),)
 
-if __name__ == "__main__":
-    logger = logging.getLogger("PicoEvent.Database config")
-    logger.setLevel(logging.DEBUG)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(ch)
-
-    db = Database(logger)
-    print("Database found. Clear and reinstall? (y/n)")
-    response = input("> ")
-    if response == "y":
-        db.mysql_setup()
-        print("Reinstalling database schema...")
-        time.sleep(5)
-        print("Done")
-        db.mysql_admin_setup()
+            if self._logger:
+                self._logger.error(error_message)
+            else:
+                print(error_message)
+        return -1
