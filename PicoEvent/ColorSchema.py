@@ -1,3 +1,6 @@
+# I think there can be something cool to come from this eventually, I'm bad at picking colors
+
+
 class ColorSchema:
     def __init__(self):
         self._color_table = []

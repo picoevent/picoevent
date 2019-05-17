@@ -250,7 +250,7 @@ class Database:
                 print(error_message)
         raise DatabaseException
 
-    def validate_api_key(self, api_key):
+    def validate_api_key(self, api_key) -> tuple:
         sql = "SELECT node_id, created, quota, next_reset, events_posted, suspension_event_id FROM api_keys"
         sql += " WHERE api_key=%s"
         c = self._db.cursor()
@@ -269,7 +269,7 @@ class Database:
                 self._logger.error(error_message)
             else:
                 print(error_message)
-        return None
+        raise DatabaseException
 
     def update_quota(self, node_id):
         if self._read_only:
@@ -298,6 +298,7 @@ class Database:
             raise DatabaseReadOnlyException
 
         sql = "UPDATE api_keys SET events_posted=%s AND next_reset=%s WHERE node_id=%s"
+
         c = self._db.cursor()
         try:
             c.execute(sql, (0, next_reset, node_id))
@@ -386,17 +387,27 @@ class Database:
                 print(error_message)
         raise DatabaseException
 
-    def create_api_key(self, api_key: str) -> int:
+    def create_api_key(self, api_key: str, rate_limit_quota: int=None, next_reset_seconds: int=None) -> int:
         if self._read_only:
             raise DatabaseReadOnlyException
+
+        if rate_limit_quota:
+            quota = rate_limit_quota
+        else:
+            quota = self._rate_limit_quota
+
+        if next_reset_seconds:
+            reset_interval = datetime.now() + timedelta(seconds=next_reset_seconds)
+        else:
+            reset_interval = self.next_quota_reset
 
         if re.compile("[A-F0-9]{16}").match(api_key):
             sql = "INSERT INTO api_keys (api_key,quota,next_reset) VALUE (%s,%s,%s)"
             c = self._db.cursor()
             try:
                 c.execute(sql, (api_key,
-                                self.rate_limit_quota,
-                                self.next_quota_reset))
+                                quota,
+                                reset_interval))
                 self._db.commit()
                 if c.rowcount == 1:
                     return c.lastrowid

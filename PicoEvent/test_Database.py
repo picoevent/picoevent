@@ -1,4 +1,4 @@
-from PicoEvent.Database import Database, DatabaseException
+from PicoEvent.Database import Database
 from PicoEvent.EventLog import Event
 import unittest
 import os
@@ -6,6 +6,7 @@ import binascii
 import logging
 import random
 from datetime import datetime, timedelta
+import time
 
 DEFAULT_EVENTS = ["Create API Key",
                   "Change Quota",
@@ -197,6 +198,17 @@ class TestCreateAPIKey(unittest.TestCase):
     def test_invalid_api_key(self):
         result = self._db.create_api_key("invalid")
         self.assertEqual(result, -1)
+
+    def test_custom_reset_interval(self):
+        new_api_key = binascii.hexlify(os.urandom(8)).decode('utf-8').upper()
+        result = self._db.create_api_key(new_api_key, next_reset_seconds=5000)
+        self.assertGreater(result, 0)
+        api_key_info = self._db.validate_api_key(new_api_key)
+        lower_bounds = 4995
+        higher_bounds = 5005
+        self.assertGreater(api_key_info[3], datetime.now() + timedelta(seconds=lower_bounds))
+        self.assertLess(api_key_info[3], datetime.now() + timedelta(seconds=higher_bounds))
+        self.assertEqual(result, api_key_info[0])
 
 
 if __name__ == "__main__":

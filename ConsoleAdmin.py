@@ -5,6 +5,9 @@ from PicoEvent.Environment import Environment
 import sys
 import logging
 import json
+import binascii
+import os
+from datetime import timedelta
 
 VERSION = 0.1
 MAX_LOGIN_ATTEMPTS = 5
@@ -173,7 +176,8 @@ class ConsoleUserManager(ConsoleMenu):
 
 class ConsoleMainMenuManager(ConsoleMenu):
     STATES = ["DATABASE_NOT_SETUP", "USER_ADMIN"]
-    MAIN_MENU = ["Reset admin password", "User administration", "Exit"]
+    MAIN_MENU = ["Reset admin password", "List API Keys", "Generate new API key", "Reset Quota",
+                 "User administration", "Exit"]
 
     def __init__(self, console_env, use_logger=None):
         self._config = config
@@ -224,9 +228,65 @@ class ConsoleMainMenuManager(ConsoleMenu):
         if choice == 1:
             self.change_administrator_password()
         elif choice == 2:
+            _db = Database(self._logger, False, False, self._env)
+            # node_id, api_key, created, quota, next_reset, events_posted
+            all_api_keys = _db.list_api_keys()
+            del _db
+            print("Node ID\tAPI Key\tCreated\tQuota\tNext Reset\tEvents Posted")
+            for each_key in all_api_keys:
+                print("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(each_key[0], each_key[1], each_key[2].isoformat(),
+                                                                 each_key[3], each_key[4], each_key[5]))
+        elif choice == 3:
+            print("Would you like to set a custom quota reset interval for the new API key?")
+            custom_reset_seconds = None
+            if self.confirm():
+                day_seconds = 3600 * 24
+                print("Choose a quota reset interval in seconds between 1 and {0}".format(day_seconds))
+                custom_reset_seconds = self.select_item(1, day_seconds)
+            print("Would you like to set a custom quota for the new API key?")
+            custom_quota = None
+            if self.confirm():
+                print("Choose a custom quota between 100 and 50000")
+                custom_quota = self.select_item(100, 50000)
+            new_api_key = binascii.hexlify(os.urandom(8)).decode('utf-8').upper()
+            _db = Database(self._logger, False, False, self._env)
+            node_id = _db.create_api_key(new_api_key, custom_quota, custom_reset_seconds)
+            if node_id > 0:
+                api_key_info = _db.validate_api_key(new_api_key)
+                print("New API Key {0} generated with a quota of {1}, next reset {1}.".format(api_key_info[1],
+                                                                                              api_key_info[4],
+                                                                                              api_key_info[5]))
+            else:
+                print("Could not create a new API key, check log file for more info.")
+            del _db
+        elif choice == 4:
+            print("Reset quota (you will need the node id from the API key list)")
+            _db = Database(self._logger, False, False, self._env)
+            all_node_ids = set()
+            for each_api_key in _db.list_api_keys:
+                all_node_ids.add(each_api_key[0])
+            repeat = True
+            node_id = None
+            while repeat:
+                user_input = int(input("Node ID: "))
+                if user_input in all_node_ids:
+                    node_id = user_input
+                    break
+                print("Node ID {0} not in the list of active API keys. Try again?")
+                repeat = self.confirm()
+            if node_id:
+                next_reset = _db.reset_quota
+                print("Would you like to set a custom reset interval (default: 3600 seconds)")
+                if self.confirm():
+                    day_seconds = 3600 * 24
+                    print("Choose a quota reset interval in seconds between 1 and {0}".format(day_seconds))
+                    next_reset = datetime.now() + timedelta(seconds=self.select_item(1, day_seconds))
+                _db.reset_quota(node_id, next_reset)
+        elif choice == 5:
             self.user_admin_mode(self._user_id, self._session_token)
         else:
-            sys.exit()
+            print("Bye")
+            sys.exit(0)
         input("Press Enter to continue")
 
 
@@ -306,7 +366,7 @@ if __name__ == "__main__":
             if user_input == "Y":
                 result = db.mysql_setup()
                 if result > 0:
-                    print("Could not install schama, check log for details.")
+                    print("Could not install schema, check log for details.")
                     sys.exit(1)
                 result = db.mysql_admin_setup()
                 if result > 0:

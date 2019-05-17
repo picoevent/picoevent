@@ -123,8 +123,8 @@ class EventLog:
                 return new_django_user
 
     def get_api_key_object(self, api_key: str) -> APIKey:
-        node_data = self._db.validate_api_key(api_key)
-        if node_data:
+        try:
+            node_data = self._db.validate_api_key(api_key)
             node = APIKey(node_data[0], api_key, node_data[1], node_data[2], node_data[3],
                           node_data[4], node_data[5])
             if node.suspended_event:
@@ -137,7 +137,8 @@ class EventLog:
             if node.events_posted >= node.quota:
                 raise APIKeyRateLimited
             return node
-        raise APIKeyInvalid
+        except DatabaseException:
+            raise APIKeyInvalid
 
     def list_api_keys(self) -> list:
         output = []
