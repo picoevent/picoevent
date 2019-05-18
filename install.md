@@ -18,10 +18,8 @@ environment.
 
 **Set the PYTHONPATH environmental variable your current working directory.**
 
-`(venv) export PYTHONPATH=/home/django/picoevent`
+`(venv) export PYTHONPATH=/home/service/picoevent`
 
-Run PicoEvent/Database.py to setup your schema.
+**Run Console admin tool**
 
-`(venv) python PicoEvent/Database.py`
-
-At this point you should be able to use the ConsoleUserManagement.py tool in
+`(venv) python ConsoleAnalyst.py`
