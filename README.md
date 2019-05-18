@@ -1,6 +1,6 @@
 # picoevent business intelligence microplatform
 
-The initial goal of this project is to provide a simple, scalable, extendable business intelligence solution for smaller platforms, especially Django projects.
+The initial goal of this project is to provide a simple, scalable, extendable business intelligence solution for smaller platforms, especially Django projects. The idea for this project came out of recurring problems with Django scalability.
 
 Like the Flask framework picoevent is initially written against, it's limitations in functionality provide a trade off for flexibility and straightforward, virtually unlimited, scalability.
 
