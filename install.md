@@ -1,4 +1,4 @@
-#Database Configuration
+# Database Configuration
 
 If you simply want to develop instead of directly deploying to an instance, this is a simplified guide to setting up the database.
 
