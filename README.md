@@ -10,4 +10,4 @@ The PicoEvent/config directory provides sample configuration files for nginx and
 
 The recommended scaling from this configuration is to bare metal dedicated servers, ideally no more than two (because synchronization complicates horizontal scalability on the write side) running Ubuntu or ideally FreeBSD for maximum performance using ZFS (as is recommended by the official [MySQL 5.6 manual](https://dev.mysql.com/doc/refman/5.6/en/ha-zfs-replication.html)
 
-For more information: https://picoevent.io
+For more information/support: https://picoevent.io
