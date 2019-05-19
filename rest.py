@@ -3,7 +3,7 @@ from flask import (
 )
 
 from PicoEvent.EventLog import EventLog, APIKeyInvalid, APIKeyRateLimited, APIKeySuspended
-from PicoEvent.Database import Database
+from PicoEvent.Database import Database, DatabaseException
 from PicoEvent.Environment import Environment
 import json
 import re
@@ -16,16 +16,7 @@ rest_blueprint = Blueprint('api', __name__, url_prefix="/api")
 @rest_blueprint.route('/<api_key>', methods=['POST'])
 def post_event(api_key):
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     db = Database(logger=current_app.logger, env=environment)
     event_log = EventLog(db, logger=current_app.logger)
@@ -56,16 +47,7 @@ def post_event(api_key):
 @rest_blueprint.route('/list-event-types/<api_key>', methods=["GET"])
 def list_event_types(api_key):
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     db = Database(logger=current_app.logger, env=environment)
     event_log = EventLog(db, logger=current_app.logger)
@@ -84,20 +66,31 @@ def list_event_types(api_key):
 
 # Internal rest functions (session_token vs. api_key)
 
+@rest_blueprint.route('/event-log/latest/<limit>/<session_token>', methods=["GET"])
+def latest_events(limit, session_token):
+    with current_app.app_context():
+        environment = Environment(current_app)
+
+    db = Database(logger=current_app.logger, env=environment, read_only=True)
+    try:
+        user = db.validate_session(session_token)
+        # TODO: permissions
+        event_log = EventLog(db, logger=current_app.logger)
+        _latest_events = event_log.retrieve_events(limit=limit)
+        json_array = []
+        for each_event in _latest_events:
+            json_array.append(str(each_event))
+        return Response(json.dumps({"success": True,
+                                    "count": len(json_array),
+                                    "events": json_array}))
+    except DatabaseException:
+        abort(403)
+
 
 @rest_blueprint.route('/event-type/add/<session_token>', methods=['POST'])
 def add_event_type(session_token):
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     db = Database(logger=current_app.logger, env=environment)
     user_object = db.validate_session(session_token)

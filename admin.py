@@ -21,16 +21,7 @@ def admin_no_session():
 @admin_blueprint.route('/api-key/add', methods=['POST'])
 def admin_create_api_key():
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     session_token = request.form["token"]
     db = Database(logger=current_app.logger, env=environment)
@@ -49,16 +40,7 @@ def admin_create_api_key():
 @admin_blueprint.route('/<session_token>')
 def home(session_token):
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     db = Database(logger=current_app.logger, env=environment)
     event_log = EventLog(db, current_app.logger)
@@ -86,16 +68,7 @@ def home(session_token):
 @admin_blueprint.route('/event-type/add', methods=['POST'])
 def add_event_type():
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     session_token = request.form['token']
     new_event_name = request.form['new_event_name']
@@ -120,16 +93,7 @@ def add_event_type():
 @admin_blueprint.route('/login', methods=['POST'])
 def login():
     with current_app.app_context():
-        environment = Environment(current_app.config["MYSQL_HOST"],
-                                  current_app.config["MYSQL_READ_ONLY_HOST"],
-                                  current_app.config["MYSQL_USER"],
-                                  current_app.config["MYSQL_PASSWORD"],
-                                  current_app.config["MYSQL_DB"],
-                                  current_app.config["MYSQL_TEST_DB"],
-                                  current_app.config["RATE_LIMIT_QUOTA"],
-                                  current_app.config["RATE_LIMIT_RESET"],
-                                  current_app.config["REDIS_MASTER_HOST"],
-                                  current_app.config["REDIS_READ_ONLY_HOST"])
+        environment = Environment(current_app)
 
     input_data = request.get_json(True)
 

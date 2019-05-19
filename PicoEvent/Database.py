@@ -195,7 +195,7 @@ class Database:
         def append_ordering(sql_stmt, args):
             if not COUNT_REGEX.search(sql_stmt):
                 if limit:
-                    args.append(limit)
+                    args.append(int(limit))
                     return sql_stmt + " ORDER BY event_id DESC LIMIT %s"
                 else:
                     return sql_stmt + " ORDER BY event_id DESC"

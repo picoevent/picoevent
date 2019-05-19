@@ -66,7 +66,7 @@ class Event:
         return json.dumps(self.event_data)
 
     def __str__(self):
-        created_string = self.created
+        created_string = self.created.isoformat()
         serialize_data = {
             "event_id": self.event_id,
             "event_type_id": self.event_type_id,
@@ -223,6 +223,7 @@ class EventLog:
                 # event_id, event_type_id, node_id, user_id, event_data, created, event_type.event_type
                 new_event = Event(db_event_record[0],
                                   db_event_record[1],
+                                  db_event_record[2],
                                   db_event_record[6],
                                   json.loads(db_event_record[4]),
                                   db_event_record[2],
@@ -247,13 +248,21 @@ class EventLog:
             for row in meta_data:
                 event_id = row[0]
                 cache_key = "event_id:{0}".format(event_id)
-                if self._cache.exists(cache_key) is False:
+                event_data = self._cache.get(cache_key)
+
+                if event_data is None:
                     event_data = self._db.get_event_data(event_id)
-                    self._cache.set(cache_key, str(event_data))
-                    output.append(event_data)
+                    new_event = Event(event_data[0],
+                                      event_data[1],
+                                      event_data[6],
+                                      json.loads(event_data[4]),
+                                      event_data[3],
+                                      event_data[2],
+                                      event_data[5])
+                    self._cache.set(cache_key, str(new_event))
+                    output.append(json.loads(str(new_event)))
                 else:
-                    event_data = self._cache.get(cache_key)
-                    output.append(event_data)
+                    output.append(json.loads(event_data))
             return output
         except DatabaseException:
             raise EventLogException
