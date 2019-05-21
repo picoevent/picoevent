@@ -66,7 +66,7 @@ class Event:
         return json.dumps(self.event_data)
 
     def __str__(self):
-        created_string = self.created.isoformat()
+        created_string = self.created
         serialize_data = {
             "event_id": self.event_id,
             "event_type_id": self.event_type_id,

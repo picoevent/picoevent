@@ -1,4 +1,4 @@
-from PicoEvent.Database import Database
+from PicoEvent.Database import Database, DatabaseNotFoundException
 from PicoEvent.EventLog import Event
 import unittest
 import os
@@ -6,7 +6,6 @@ import binascii
 import logging
 import random
 from datetime import datetime, timedelta
-import time
 
 DEFAULT_EVENTS = ["Create API Key",
                   "Change Quota",
@@ -36,6 +35,50 @@ def deserialize_iso_format(iso_datetime: str) -> datetime:
 def random_later_datetime(max_seconds=3600):
     delta = timedelta(seconds=random.randint(0, max_seconds))
     return datetime.now() + delta
+
+
+class TestDatabaseNotFoundException(unittest.TestCase):
+    MAX_EVENTS_LOGGED = 1000
+
+    def setUp(self) -> None:
+        self._db = Database(logger, True)
+        self._mock_data = dict()
+        total_events = random.randint(0, self.MAX_EVENTS_LOGGED)
+
+        for each in DEFAULT_EVENTS:
+            event_type_id = self._db.create_event_type(each)
+            self.assertGreater(event_type_id, 0, msg="Failed to create event type")
+            mock_events = []
+            now = datetime.now()
+            for x in range(0, total_events):
+                mock_event_data = {"floatMock": random.random(),
+                                   "datetimeMock": random_later_datetime().isoformat(),
+                                   "integerMock": random.randint(0, 1500000),
+                                   "stringMock": "a" * random.randint(0, 1024)}
+
+                new_mock_event = Event(0, event_type_id, each, mock_event_data, 0, 1, now)
+                mock_events.append(new_mock_event)
+            self._mock_data[each] = mock_events
+
+        event_type = random.choice(DEFAULT_EVENTS)
+        mock_events = self._mock_data[event_type]
+        event_type_id = None
+        for each_mock in mock_events:
+            if event_type_id is None:
+                event_type_id = each_mock.event_type_id
+            event_id = self._db.log_event(each_mock.event_data,
+                                          each_mock.event_type_id,
+                                          each_mock.node_id,
+                                          each_mock.user_id)
+            self.assertGreater(event_id, 0, msg="Failed to log event.")
+            each_mock.event_id = event_id
+        event_type_count = self._db.get_event_count(event_type_id=event_type_id)
+        self.assertEqual(event_type_count, len(mock_events))
+        logger.info("Events logged: {0} ({1})".format(event_type_count, event_type))
+
+    def test_lookupFailed(self):
+        with self.assertRaises(DatabaseNotFoundException):
+            self._db.get_event_data(self.MAX_EVENTS_LOGGED + self.MAX_EVENTS_LOGGED)
 
 
 class TestEventTypeIdLogging(unittest.TestCase):
@@ -77,7 +120,7 @@ class TestEventTypeIdLogging(unittest.TestCase):
         logger.info("Fetching events individually...")
         total_events_logged += event_type_count
         for each_mock in mock_events:
-            db_event_data = self._db.get_event_data(each_mock.event_type_id)
+            db_event_data = self._db.get_event_data(each_mock.event_id)
             # DB: event_id, event_type_id, node_id, user_id, event_data, created, event_type.event_type
             self.assertEqual(db_event_data[1], each_mock.event_type_id)
             self.assertEqual(db_event_data[2], each_mock.node_id)

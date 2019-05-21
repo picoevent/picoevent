@@ -1,5 +1,5 @@
 from PicoEvent.AnalystUser import AnalystUser
-from PicoEvent.Environment import Environment
+from PicoEvent.Environment import EnvironmentBase
 from MySQLdb import connect, ProgrammingError, Error
 from hashlib import sha256
 from datetime import datetime, timedelta
@@ -45,8 +45,13 @@ class DatabaseReadOnlyException(DatabaseException):
     pass
 
 
+class DatabaseNotFoundException(DatabaseException):
+    """ Record not found """
+    pass
+
+
 class Database:
-    def __init__(self, logger=None, test: bool = False, read_only: bool = False, env: Environment = None):
+    def __init__(self, logger=None, test: bool = False, read_only: bool = False, env: EnvironmentBase = None):
         self._logger = logger
         if env:
             self._env = env
@@ -142,7 +147,7 @@ class Database:
                 self._logger.error(error_message)
             else:
                 print(error_message)
-        raise DatabaseException
+        raise DatabaseNotFoundException
 
     def retrieve_events(self, user_id: int = None, event_type_id: int = None, node_id=None, since: datetime = None,
                         until: datetime = None, limit=100) -> list:
@@ -387,7 +392,7 @@ class Database:
                 print(error_message)
         raise DatabaseException
 
-    def create_api_key(self, api_key: str, rate_limit_quota: int=None, next_reset_seconds: int=None) -> int:
+    def create_api_key(self, api_key: str, rate_limit_quota: int = None, next_reset_seconds: int = None) -> int:
         if self._read_only:
             raise DatabaseReadOnlyException
 

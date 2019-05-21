@@ -1,5 +1,32 @@
-class Environment:
+class EnvironmentBase:
+    def __init__(self):
+        self._mysql_host = None
+        self._mysql_read_only_host = None
+        self._mysql_user = None
+        self._mysql_passwd = None
+        self._mysql_db = None
+        self._mysql_test_db = None
+        self._rate_limit_quota = None
+        self._rate_limit_reset = None
+        self._redis_master_host = None
+        self._redis_read_only_host = None
+        self.secret_key = None
+
+    @property
+    def db_config(self):
+        return {"mysql_host": self._mysql_host,
+                "mysql_read_only_host": self._mysql_read_only_host,
+                "mysql_user": self._mysql_user,
+                "mysql_passwd": self._mysql_passwd,
+                "mysql_db": self._mysql_db,
+                "mysql_test_db": self._mysql_test_db,
+                "rate_limit_quota": self._rate_limit_quota,
+                "rate_limit_reset": self._rate_limit_reset}
+
+
+class Environment(EnvironmentBase):
     def __init__(self, app):
+        super().__init__()
         self._mysql_host = app.config["MYSQL_HOST"]
         self._mysql_read_only_host = app.config["MYSQL_READ_ONLY_HOST"]
         self._mysql_user = app.config["MYSQL_USER"]
@@ -13,20 +40,24 @@ class Environment:
         self.secret_key = app.config["SECRET_KEY"]
 
     @property
-    def db_config(self):
-        return {"mysql_host": self._mysql_host,
-                "mysql_read_only_host": self._mysql_read_only_host,
-                "mysql_user": self._mysql_user,
-                "mysql_passwd": self._mysql_passwd,
-                "mysql_db": self._mysql_db,
-                "mysql_test_db": self._mysql_test_db,
-                "rate_limit_quota": self._rate_limit_quota,
-                "rate_limit_reset": self._rate_limit_reset}
-
-    @property
     def redis_master_host(self) -> str:
         return self._redis_master_host
 
     @property
     def redis_read_only_host(self) -> str:
         return self._redis_read_only_host
+
+
+class ConsoleEnvironment(EnvironmentBase):
+    def __init__(self):
+        super().__init__()
+        import json
+        config_stream = open("config/config.json")
+        _config = json.load(config_stream)
+        config_stream.close()
+        self._mysql_host = _config["mysql_host"]
+        self._mysql_read_only_host = self._mysql_host
+        self._mysql_user = _config["mysql_user"]
+        self._mysql_passwd = _config["mysql_passwd"]
+        self._mysql_db = _config["mysql_db"]
+        self._mysql_test_db = _config["mysql_test_db"]
