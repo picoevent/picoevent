@@ -1,3 +1,9 @@
+# At around version Flask 0.8 it was much harder to read from a config file, so we sort of do the Django thing with
+# a command line database initialization tool. A la manage.py. I tend to think this menu driven interface is easier
+# to use, and hopefully we get something really slick after a while. That's the great thing about Python that iterative
+# development.
+
+
 class EnvironmentBase:
     def __init__(self):
         self._mysql_host = None
@@ -52,7 +58,7 @@ class ConsoleEnvironment(EnvironmentBase):
     def __init__(self):
         super().__init__()
         import json
-        config_stream = open("config/config.json")
+        config_stream = open("PicoEvent/config/config.json")
         _config = json.load(config_stream)
         config_stream.close()
         self._mysql_host = _config["mysql_host"]
@@ -61,3 +67,5 @@ class ConsoleEnvironment(EnvironmentBase):
         self._mysql_passwd = _config["mysql_passwd"]
         self._mysql_db = _config["mysql_db"]
         self._mysql_test_db = _config["mysql_test_db"]
+        self._rate_limit_quota = 100
+        self._rate_limit_reset = 3600

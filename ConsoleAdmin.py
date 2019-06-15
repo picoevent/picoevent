@@ -1,13 +1,14 @@
-#  This is like manage.py
+# This is like manage.py but not really debugged thoroughly. See this is why we call it pico event, because it's
+# hard enough to keep this all together doing everything as simple as possible.
 
 from PicoEvent.Database import Database, DatabaseException
-from PicoEvent.Environment import Environment
+from PicoEvent.Environment import Environment, ConsoleEnvironment
 import sys
 import logging
 import json
 import binascii
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 VERSION = 0.1
 MAX_LOGIN_ATTEMPTS = 5
@@ -322,8 +323,7 @@ if __name__ == "__main__":
             print("Logging to file: {0}".format(config["console_log_file"]))
             logger = setup_file_logging(config["console_log_file"])
 
-    env = Environment(config["mysql_host"], "", config["mysql_user"], config["mysql_passwd"], config["mysql_db"],
-                      config["mysql_test_db"], 0, 3600, "", "")
+    env = ConsoleEnvironment()
 
     context_manager = ConsoleMainMenuManager(env, logger)
     db = Database(env=env, logger=logger)

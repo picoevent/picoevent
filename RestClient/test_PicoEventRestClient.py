@@ -3,7 +3,7 @@
 from PicoEvent.Database import Database
 from PicoEvent.EventLog import EventLog
 from PicoEvent.Environment import Environment
-import PicoEventRestClient
+import RestClient.PicoEventRestClient
 import unittest
 import binascii
 import os
