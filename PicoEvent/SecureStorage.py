@@ -109,6 +109,8 @@ class SecureDatabase:
             self._logger.error("Database fault")
             raise SecureDatabaseException
 
+# I'm not really sure about this, seems like a better idea than simply deleting encrypted data.
+
     def destroy_secure_data(self, row_id: int, event_id: int):
         try:
             sql = "SELECT initialization_vector, encrypted_data FROM secure_storage WHERE id=%s"

@@ -224,7 +224,6 @@ class EventLog:
                 new_event = Event(db_event_record[0],
                                   db_event_record[1],
                                   db_event_record[2],
-                                  db_event_record[6],
                                   json.loads(db_event_record[4]),
                                   db_event_record[2],
                                   db_event_record[3],
