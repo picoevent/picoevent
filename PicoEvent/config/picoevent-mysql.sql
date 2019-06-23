@@ -52,10 +52,9 @@ CREATE TABLE `api_keys` (
   `events_posted` int(10) unsigned DEFAULT '0',
   `suspension_event_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`node_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET  = @saved_cs_client */;
 
---
 -- Table structure for table `event_log`
 --
 
@@ -72,7 +71,7 @@ CREATE TABLE `event_log` (
   PRIMARY KEY (`event_id`),
   KEY `event_log_event_type_id_index` (`event_type_id`),
   KEY `event_log_user_id_index` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,7 +85,7 @@ CREATE TABLE `event_type` (
   `event_type_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `event_type` varchar(55) DEFAULT NULL,
   PRIMARY KEY (`event_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,11 +126,10 @@ CREATE TABLE `users` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_ip` varchar(15) DEFAULT NULL,
   `session_token` char(16) DEFAULT NULL,
-  `acl` json DEFAULT NULL,
   `full_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email_address` (`email_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
